@@ -1,7 +1,7 @@
 # PRD — CalmNotes
 
-Versão: 1.1  
-Data: 2025-10-22  
+Versão: 1.2  
+Data: 2025-10-23  
 Autor: Ian Fernandes Borges
 
 ---
@@ -34,6 +34,7 @@ CalmNotes é um aplicativo mobile minimalista para criação e organização de 
 - Termos e Condições: página implementada e integrada ao onboarding. — Implementado.
 - Armazenamento local: SharedPreferences com serialização JSON. — Implementado.
 - Rotas centralizadas: onGenerateRoute. — Implementado.
+- Foto de perfil: upload, visualização e armazenamento local. — Implementado.
 
 Extras planejados:
 - Sincronização remota opcional.
@@ -62,6 +63,13 @@ Fluxo — Privacidade
 Fluxo — Termos
 1. Termos aparecem durante onboarding e são acessíveis via rota /terms quando disponível.
 
+Fluxo — Foto de Perfil
+1. Usuário acessa Settings ou perfil na Home
+2. Seleciona opção para adicionar/alterar foto
+3. Escolhe entre câmera ou galeria
+4. Foto é convertida para Base64 e salva em SharedPreferences
+5. Avatar é atualizado na interface
+
 ---
 
 ## 6. Telas / UI (status)
@@ -87,12 +95,14 @@ Note
 Storage keys
 - calm_notes_v1 — JSON array de notas
 - calm_notes_privacy_v1 — boolean (true = local)
+- calm_notes_profile_pic — String (Base64 da foto)
 
 ---
 
 ## 8. Requisitos não funcionais
 - Plataforma: Flutter (iOS e Android, web PWA básico presente).
 - Performance: lista deve carregar rapidamente; projetado para volumes pequenos (SharedPreferences).
+- Foto de perfil: otimização automática para máximo 2MB, dimensões 200x200px.
 - Resiliência: tratamento para JSON inválido e fallback (nota inicial criada se necessário).
 - Privacidade: dados locais por padrão; nenhuma sincronização remota ativa.
 - Acessibilidade: respeitar escala de fontes do sistema.
@@ -103,6 +113,7 @@ Storage keys
 - Tempo médio para criar e salvar uma nota < 10s.
 - Sem perda de notas em uso normal.
 - Flag de privacidade persiste entre reinícios.
+- Taxa de adoção da foto de perfil > 30% dos usuários ativos.
 
 ---
 
@@ -126,13 +137,16 @@ Storage keys
 - Flag de privacidade lê/escreve corretamente em SharedPreferences.
 - Termos acessíveis a partir do fluxo de onboarding ou Settings.
 - Projeto builda e roda em debug/release (Android/iOS).
+- Upload e visualização da foto de perfil funcionando.
+- Persistência correta da foto entre sessões.
+- Otimização automática de fotos grandes.
 
 ---
 
 ## 13. Entregáveis
 - Código fonte com telas e serviços implementados.
 - README e PRD atualizados.
-- Testes unitários recomendados para StorageService/EditorService.
+- Testes unitários recomendados para StorageService/EditorService/ProfileService.
 - Checklist de QA para fluxos principais.
 
 ---

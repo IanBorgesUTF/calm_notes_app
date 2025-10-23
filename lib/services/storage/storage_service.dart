@@ -69,4 +69,14 @@ class StorageService {
     final sp = await SharedPreferences.getInstance();
     sp.setBool(privKey, v);
   }
+
+  Future<void> saveProfileImagePath(String path) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('profile_image', path);
+  }
+
+  Future<String?> loadProfileImagePath() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('profile_image');
+  }
 }

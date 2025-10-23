@@ -15,6 +15,7 @@ Prover uma experiência limpa e rápida para criar, editar e organizar notas loc
 - Armazenamento local completo via SharedPreferences (serialização JSON).
 - Tema com cores definidas (slate, mint, amber).
 - Web PWA básico presente (web/index.html, web/manifest.json).
+- Suporte a foto de perfil do usuário.
 
 ---
 
@@ -25,6 +26,7 @@ Prover uma experiência limpa e rápida para criar, editar e organizar notas loc
 - Flag de privacidade (Settings) que determina comportamento de armazenamento local vs. possível sync futura.
 - Onboarding/Welcome + Termos e Condições.
 - Rotas centralizadas (onGenerateRoute).
+- Personalização com foto de perfil do usuário.
 
 ---
 
@@ -34,7 +36,7 @@ Prover uma experiência limpa e rápida para criar, editar e organizar notas loc
 - lib/theme.dart — definições de cores e ThemeData.
 - lib/models/note.dart — modelo Note (id, title, content, tags, updatedAt) e (de)serialização JSON.
 - lib/services/storage/storage_service.dart — StorageService:
-  - Chaves: `calm_notes_v1` (lista de notas), `calm_notes_privacy_v1` (flag de privacidade).
+  - Chaves: `calm_notes_v1` (lista de notas), `calm_notes_privacy_v1` (flag de privacidade), `calm_notes_profile_pic` (foto de perfil).
   - Métodos: loadNotes, saveNote, deleteNote, getPrivacyFlag, setPrivacyFlag.
   - Cria nota inicial quando não há notas.
 - lib/services/editor/editor_service.dart — EditorService: init, save (coordena carregamento/salvamento).
@@ -51,6 +53,7 @@ Prover uma experiência limpa e rápida para criar, editar e organizar notas loc
 ## Armazenamento e comportamento
 - Notas salvas como JSON na chave `calm_notes_v1`.
 - Flag de privacidade em `calm_notes_privacy_v1` (valor booleano). Padrão: true (local).
+- Foto de perfil armazenada como Base64 na chave `calm_notes_profile_pic`.
 - Não existe sincronização remota por padrão — qualquer sync deve checar a flag de privacidade.
 - Ao abrir sem notas, StorageService cria uma nota exemplo para primeiro uso.
 
@@ -89,15 +92,6 @@ Verifique as versões em pubspec.yaml.
 - Verifique a existência do componente/arquivo referido como `PopScope` em lib/pages/home/home.dart — pode ser um wrapper customizado; se não existir, substitua por WillPopScope.
 - Centralize futuras lógicas de sincronização em um novo serviço (ex.: sync_service.dart) que respeite `calm_notes_privacy_v1`.
 - Tests unitários não estão incluídos — sugerido gerar testes para StorageService e EditorService.
-
----
-
-## Sugestões de melhorias
-- Implementar tela de Settings (acesso rápido para mudar flag de privacidade).
-- Adicionar busca e tags filtráveis.
-- Export / backup (JSON, TXT).
-- Sincronização opcional segura com autenticação (respeitar privacidade por padrão).
-- Suporte a temas Light/Dark.
 
 ---
 
