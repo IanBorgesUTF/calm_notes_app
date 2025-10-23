@@ -93,16 +93,19 @@ class ProfilePhotoService {
     return await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: const Text('Confirmar foto'),
+            title: const Text('Confirmar foto',style: TextStyle(color: Colors.black),),
             content: Image.file(image, fit: BoxFit.cover),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Cancelar'),
+                child: const Text('Cancelar',style: TextStyle(color: Colors.black),),
               ),
               ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all<Color>(Colors.blue),
+                ),
                 onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Salvar'),
+                child: const Text('Salvar',style: TextStyle(color: Colors.white),),
               ),
             ],
           ),

@@ -74,6 +74,7 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                 onPressed: () async {
                   await photoService.pickPhoto(context);
                   widget.onPhotoUpdated();
+                  Navigator.pop(context); 
                 },
               ),
               const SizedBox(height: 10),
@@ -84,6 +85,7 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                 onPressed: () async {
                   await photoService.removePhoto();
                   widget.onPhotoRemoved();
+                  Navigator.pop(context);
                 },
               ),
               const Spacer(),
