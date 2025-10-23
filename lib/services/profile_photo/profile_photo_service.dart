@@ -74,13 +74,13 @@ class ProfilePhotoService {
         content: const Text('De onde deseja obter a foto?'),
         actions: [
           TextButton.icon(
-            icon: const Icon(Icons.photo_camera),
-            label: const Text('Câmera'),
+            icon: const Icon(Icons.photo_camera, color: Colors.black,),
+            label: const Text('Câmera',style: TextStyle(color: Colors.black)),
             onPressed: () => Navigator.pop(ctx, ImageSource.camera),
           ),
           TextButton.icon(
-            icon: const Icon(Icons.photo_library),
-            label: const Text('Galeria'),
+            icon: const Icon(Icons.photo_library, color: Colors.black),
+            label: const Text('Galeria',style: TextStyle(color: Colors.black)),
             onPressed: () => Navigator.pop(ctx, ImageSource.gallery),
           ),
         ],
