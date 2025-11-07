@@ -47,11 +47,10 @@ class HomePageState extends State<HomePage> {
 
   void openEditor([String? id]) {
     Navigator.of(context)
-        .pushNamed(Routes.editorPage, arguments: {'id': id})
+        .pushReplacementNamed(Routes.editorPage, arguments: {'id': id})
         .then((_) => loadNotes());
   }
 
-  /// abre o Drawer de perfil
   void openProfileDrawer() {
     Navigator.of(context).push(
       PageRouteBuilder(

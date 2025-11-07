@@ -1,6 +1,5 @@
+import 'package:calm_notes_app/pages/login/login_page.dart';
 import 'package:flutter/material.dart';
-import 'package:calm_notes_app/pages/home/home.dart';
-import 'package:calm_notes_app/pages/Terms/terms.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class WelcomePage extends StatelessWidget {
@@ -42,20 +41,13 @@ class WelcomePage extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => TermsPage(
-                          onNext: () {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (_) => const HomePage()),
-                            );
-                          },
-                        ),
-                      ),
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginPage()),
                     );
                   },
                   style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
-                  child: const Text('Ler Termos e Condições'),
+                  child: const Text('Começar com minhas anotações'),
                 ),
               ),
               const SizedBox(height: 24),

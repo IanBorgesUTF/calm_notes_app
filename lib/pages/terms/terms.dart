@@ -1,3 +1,4 @@
+import 'package:calm_notes_app/config/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -44,7 +45,7 @@ class TermsPageState extends State<TermsPage> {
     if (widget.onNext != null) {
       widget.onNext!();
     } else {
-      Navigator.of(context).pop();
+      Navigator.of(context).pushReplacementNamed(Routes.createAccountPage);
     }
   }
 

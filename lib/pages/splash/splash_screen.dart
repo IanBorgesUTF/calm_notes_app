@@ -27,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen>
       });
 
     _controller.forward().whenComplete(() {
-      Navigator.pushNamed(context, Routes.onboardingPage);
+      Navigator.pushReplacementNamed(context, Routes.loginPage);
     });
   }
 
