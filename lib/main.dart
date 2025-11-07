@@ -1,7 +1,9 @@
 import 'package:calm_notes_app/config/routes.dart';
 import 'package:calm_notes_app/pages/home/home.dart';
 import 'package:calm_notes_app/pages/welcome/welcome.dart';
+import 'package:calm_notes_app/providers/notes/notes_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,7 +18,11 @@ Future<void> main() async {
 
   final sp = await SharedPreferences.getInstance();
   final seen = sp.getBool('seen_welcome_v1') ?? false;
-  runApp(CalmNotesApp(initialHome: seen ? const HomePage() : const WelcomePage()));
+  runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => NotesProvider()..loadNotes()),
+      ], child:
+    CalmNotesApp(initialHome: seen ? const HomePage() : const WelcomePage())));
 }
 
 class CalmNotesApp extends StatelessWidget {

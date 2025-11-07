@@ -54,6 +54,7 @@ class CreateAccountPageState extends State<CreateAccountPage> {
   ScaffoldMessenger.of(context).showSnackBar(
     const SnackBar(content: Text('Conta criada com sucesso!'))
   );
+  if (!mounted) return;
   Navigator.of(context).pushReplacementNamed(Routes.loginPage);
 }
 

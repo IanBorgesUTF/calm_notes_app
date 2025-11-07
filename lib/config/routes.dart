@@ -1,6 +1,6 @@
 import 'package:calm_notes_app/pages/Terms/terms.dart';
 import 'package:calm_notes_app/pages/create_account/create_account_page.dart';
-import 'package:calm_notes_app/pages/editor/editor.dart';
+import 'package:calm_notes_app/pages/editor/editor_page.dart';
 import 'package:calm_notes_app/pages/home/home.dart';
 import 'package:calm_notes_app/pages/login/login_page.dart';
 import 'package:calm_notes_app/pages/splash/splash_screen.dart';

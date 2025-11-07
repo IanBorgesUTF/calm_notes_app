@@ -41,12 +41,12 @@ void submit() async {
   setState(() => submitting = false);
 
   if (error != null) {
+    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(error)),
     );
     return;
   }
-
   Navigator.of(context).pushReplacementNamed(Routes.homePage);
 }
 
