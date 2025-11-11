@@ -45,6 +45,7 @@ class TermsPageState extends State<TermsPage> {
     if (widget.onNext != null) {
       widget.onNext!();
     } else {
+      if (!mounted) return;
       Navigator.of(context).pushReplacementNamed(Routes.createAccountPage);
     }
   }

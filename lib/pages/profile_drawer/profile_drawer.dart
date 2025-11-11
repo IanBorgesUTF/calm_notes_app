@@ -82,9 +82,12 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                 icon: const Icon(Icons.delete_forever, color: Colors.white),
                 label: const Text('Remover foto', style: TextStyle(color: Colors.white),),
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                
                 onPressed: () async {
                   await photoService.removePhoto();
+                  
                   widget.onPhotoRemoved();
+                  
                   Navigator.pop(context);
                 },
               ),

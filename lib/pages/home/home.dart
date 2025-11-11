@@ -1,4 +1,3 @@
-// lib/pages/home/home.dart
 import 'dart:io';
 import 'package:calm_notes_app/providers/notes/notes_provider.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +21,6 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     loadPhoto();
-    // load notes after build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<NotesProvider>().loadNotes();
     });
@@ -128,6 +126,7 @@ class HomePageState extends State<HomePage> {
                       const SnackBar(content: Text('Nota excluída')),
                     );
                   } catch (e) {
+                    
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Erro ao excluir nota: $e')),
                     );

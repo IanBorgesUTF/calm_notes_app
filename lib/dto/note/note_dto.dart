@@ -1,4 +1,3 @@
-// lib/dto/note/note_dto.dart
 import '../../models/note.dart';
 
 class NoteDto {
@@ -18,7 +17,6 @@ class NoteDto {
     required this.updatedAt,
   });
 
-  // Converter de Note Model -> NoteDto
   factory NoteDto.fromModel(Note note) {
     return NoteDto(
       id: note.id,
@@ -30,7 +28,6 @@ class NoteDto {
     );
   }
 
-  // Converter de NoteDto -> Note Model
   Note toModel() {
     return Note(
       id: id,
@@ -42,11 +39,10 @@ class NoteDto {
     );
   }
 
-  // Criar NoteDto a partir de JSON do Supabase
   factory NoteDto.fromJson(Map<String, dynamic> json) {
     return NoteDto(
       id: json['id']?.toString(),
-      userId: json['user_id'] ?? '', // obrigatório
+      userId: json['user_id'] ?? '',
       title: json['title'] ?? '',
       content: json['content'] ?? '',
       tags: List<String>.from(json['tags'] ?? []),
@@ -54,7 +50,6 @@ class NoteDto {
     );
   }
 
-  // Converter NoteDto -> JSON para Supabase
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,

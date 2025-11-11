@@ -47,10 +47,11 @@ class CreateAccountPageState extends State<CreateAccountPage> {
   setState(() => submitting = false);
 
   if (error != null) {
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
     return;
   }
-
+  if (!mounted) return;
   ScaffoldMessenger.of(context).showSnackBar(
     const SnackBar(content: Text('Conta criada com sucesso!'))
   );
@@ -79,7 +80,7 @@ class CreateAccountPageState extends State<CreateAccountPage> {
             children: [
               CircleAvatar(
                 radius: 40,
-                backgroundColor: theme.colorScheme.primary.withOpacity(0.12),
+                backgroundColor: theme.colorScheme.primary.withValues(alpha: 128),
                 child: Icon(Icons.person_add, size: 40, color: theme.colorScheme.primary),
               ),
               const SizedBox(height: 12),

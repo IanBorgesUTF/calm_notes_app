@@ -1,6 +1,5 @@
-// lib/models/note.dart
 class Note {
-  String? id; // null para notas novas, Supabase gera UUID
+  String? id;
   String userId;
   String title;
   String content;

@@ -1,4 +1,3 @@
-// lib/pages/editor/editor_page.dart
 import 'package:calm_notes_app/models/note.dart';
 import 'package:calm_notes_app/providers/notes/notes_provider.dart';
 import 'package:flutter/material.dart';

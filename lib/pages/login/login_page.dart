@@ -41,12 +41,13 @@ void submit() async {
   setState(() => submitting = false);
 
   if (error != null) {
-    
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(error)),
     );
     return;
   }
+  if (!mounted) return;
   Navigator.of(context).pushReplacementNamed(Routes.homePage);
 }
 
@@ -73,7 +74,7 @@ void submit() async {
             children: [
               CircleAvatar(
                 radius: 40,
-                backgroundColor: theme.colorScheme.primary.withOpacity(0.12),
+                backgroundColor: theme.colorScheme.primary.withValues(alpha: 128),
                 child: Icon(Icons.note_alt, size: 40, color: theme.colorScheme.primary),
               ),
               const SizedBox(height: 16),
