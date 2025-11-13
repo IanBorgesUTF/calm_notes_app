@@ -28,6 +28,7 @@ class ProfilePhotoService {
     final XFile? image = await _picker.pickImage(source: source);
     if (image == null) return null;
 
+    if (!context.mounted) return 'Erro no contexto da página'; 
     final confirm = await _showPreview(context, File(image.path));
     if (!confirm) return null;
 

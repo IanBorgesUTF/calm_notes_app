@@ -3,6 +3,7 @@ import 'package:calm_notes_app/pages/home/home.dart';
 import 'package:calm_notes_app/pages/welcome/welcome.dart';
 import 'package:calm_notes_app/providers/notes/notes_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'theme.dart';
@@ -11,9 +12,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await dotenv.load(fileName: ".env");
+
+  final supabaseUrl = dotenv.env['SUPABASE_URL']!;
+  final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY']!;
+
   await Supabase.initialize(
-    url: 'https://lgyufuesustikpdaexzu.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxneXVmdWVzdXN0aWtwZGFleHp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0NDQzNzYsImV4cCI6MjA3ODAyMDM3Nn0.H8uZtRfKX-3kSqppr49JVnxvnAmoOzIYPtI8b1Q0IMQ',
+    url: supabaseUrl,
+    anonKey: supabaseAnonKey,
   );
 
   final sp = await SharedPreferences.getInstance();

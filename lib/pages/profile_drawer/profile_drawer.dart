@@ -72,9 +72,10 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                 icon: const Icon(Icons.photo_camera, color: Colors.black),
                 label: const Text('Alterar foto',style: TextStyle(color: Colors.black)),
                 onPressed: () async {
+                  final navigator = Navigator.of(context);
                   await photoService.pickPhoto(context);
                   widget.onPhotoUpdated();
-                  Navigator.pop(context); 
+                  navigator.pop(); 
                 },
               ),
               const SizedBox(height: 10),
@@ -84,11 +85,10 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 
                 onPressed: () async {
+                  final navigator = Navigator.of(context);
                   await photoService.removePhoto();
-                  
                   widget.onPhotoRemoved();
-                  
-                  Navigator.pop(context);
+                  navigator.pop();
                 },
               ),
               const Spacer(),

@@ -120,14 +120,15 @@ class HomePageState extends State<HomePage> {
                   child: const Icon(Icons.delete, color: Colors.white),
                 ),
                 onDismissed: (_) async {
+                  final scaffoldMessenger = ScaffoldMessenger.of(context);
                   try {
                     await provider.deleteNote(n.id!);
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    scaffoldMessenger.showSnackBar(
                       const SnackBar(content: Text('Nota excluída')),
                     );
                   } catch (e) {
                     
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    scaffoldMessenger.showSnackBar(
                       SnackBar(content: Text('Erro ao excluir nota: $e')),
                     );
                   }
