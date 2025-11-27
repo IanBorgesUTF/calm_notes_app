@@ -16,6 +16,13 @@ class LocalProfilePhotoDataSource {
     return target.path;
   }
 
+    Future<String> saveDataUrl(String dataUrl) async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_photoKey, dataUrl);
+     await prefs.setInt(_updatedAtKey, DateTime.now().millisecondsSinceEpoch);
+      return dataUrl;
+    }
+
   Future<String?> getSavedPath() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_photoKey);
@@ -35,7 +42,6 @@ class LocalProfilePhotoDataSource {
       final file = File(path);
       if (await file.exists()) await file.delete();
     } catch (_) {
-      // não falhar criticamente no delete do arquivo
     }
     await prefs.remove(_photoKey);
     await prefs.remove(_updatedAtKey);

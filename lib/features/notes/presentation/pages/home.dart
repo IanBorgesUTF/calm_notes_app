@@ -1,7 +1,9 @@
-import 'dart:io';
+import 'package:calm_notes_app/core/image_helper.dart';
 import 'package:calm_notes_app/features/notes/presentation/providers/notes_provider.dart';
+import 'package:calm_notes_app/features/profile/presentation/providers/profile_photo_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../config/routes.dart';
 import '../../../../core/theme.dart';
 import '../../../profile/presentation/widgets/profile_drawer.dart';
@@ -37,8 +39,12 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<NotesProvider>();
-    final notes = provider.notes;
+    final notesProvider = context.watch<NotesProvider>();
+    final profileProvider = Provider.of<ProfilePhotoProvider>(context);
+
+    final notes = notesProvider.notes;
+    final displayPath = profileProvider.photoPath;
+    final ImageProvider? avatarImage = imageProviderFromPath(displayPath);
 
     return Scaffold(
       appBar: AppBar(title: const Text('CalmNotes')),
@@ -79,12 +85,16 @@ class HomePageState extends State<HomePage> {
                     child: CircleAvatar(
                       radius: 40,
                       backgroundColor: Colors.grey[700],
-                      backgroundImage: userPhotoPath != null ? FileImage(File(userPhotoPath!)) : null,
-                      child: userPhotoPath == null ? const Icon(Icons.person, color: Colors.white, size: 40) : null,
+                      backgroundImage: avatarImage,
+                      child: avatarImage == null ? const Icon(Icons.person, size: 60, color: Colors.white) : null,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text('Usuário', style: TextStyle(color: Colors.white, fontSize: 16)),
+                  Text(
+                    Supabase.instance.client.auth.currentUser?.email?.split('@').first
+                    ?? 'Usuário',
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                  ),
                 ],
               ),
             ),
@@ -101,7 +111,7 @@ class HomePageState extends State<HomePage> {
           ],
         ),
       ),
-     body: provider.loading
+     body: notesProvider.loading
     ? const Center(child: CircularProgressIndicator())
     : notes.isEmpty
         ? const Center(
@@ -127,7 +137,7 @@ class HomePageState extends State<HomePage> {
                 onDismissed: (_) async {
                   final scaffoldMessenger = ScaffoldMessenger.of(context);
                   try {
-                    await provider.deleteNote(n.id!);
+                    await notesProvider.deleteNote(n.id!);
                     scaffoldMessenger.showSnackBar(
                       const SnackBar(content: Text('Nota excluída')),
                     );

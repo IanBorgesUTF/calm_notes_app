@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:calm_notes_app/features/profile/domain/usecases/get_profile_photo_path_usecase.dart';
 import 'package:calm_notes_app/features/profile/domain/usecases/remove_profile_photo_usecase.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../domain/usecases/save_profile_photo_usecase.dart';
@@ -27,23 +29,53 @@ class ProfilePhotoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // UI (context) logic stays here:
-  Future<void> pickAndSavePhoto(BuildContext context) async {
+  Future<bool> pickAndSavePhoto(BuildContext context) async {
     final source = await _selectSource(context);
-    if (source == null) return;
+    if (source == null) return false;
     final XFile? picked = await _picker.pickImage(source: source);
-    if (picked == null) return;
-    if (!context.mounted) return;
-    final confirmed = await _showPreview(context, File(picked.path));
-    if (!confirmed) return;
+    if (picked == null) return false;
+
+    bool confirmed;
+    if (!context.mounted) return false;
+    if (kIsWeb) {
+      final bytes = await picked.readAsBytes();
+      final previewImage = MemoryImage(Uint8List.fromList(bytes));
+      if (!context.mounted) return false;
+      confirmed = await showDialog<bool>(
+            context: context,
+            builder: (_) => AlertDialog(
+              title: const Text('Confirmar foto'),
+              content: Image(image: previewImage),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')),
+                TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Confirmar')),
+              ],
+            ),
+          ) ??
+          false;
+    } else {
+      confirmed = await _showPreview(context, File(picked.path));
+    }
+
+    if (confirmed != true) return false;
 
     loading = true;
     notifyListeners();
+
     try {
-      final savedPath = await saveUseCase.call(File(picked.path));
+      String savedPath;
+      if (kIsWeb) {
+        final bytes = await picked.readAsBytes();
+        final dataUrl = 'data:image/png;base64,${base64Encode(bytes)}';
+        savedPath = await saveUseCase.callDataUrl(dataUrl);
+      } else {
+        savedPath = await saveUseCase.call(File(picked.path));
+      }
       photoPath = savedPath;
+      updatedAt = DateTime.now();
+      return true;
     } catch (e) {
-      // tratar erro
+      return false;
     } finally {
       loading = false;
       notifyListeners();

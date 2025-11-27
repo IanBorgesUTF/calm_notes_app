@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:calm_notes_app/core/image_helper.dart';
 import 'package:calm_notes_app/features/profile/presentation/providers/profile_photo_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +28,7 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = Provider.of<ProfilePhotoProvider>(context, listen: false);
       provider.loadSaved().then((_) {
-        if (mounted) setState(() {}); // opcional: atualizar updatedAt se necessário
+        if (mounted) setState(() {});
       });
     });
   }
@@ -37,6 +37,9 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
   Widget build(BuildContext context) {
     final provider = Provider.of<ProfilePhotoProvider>(context);
     final displayPath = provider.photoPath ?? widget.userPhotoPath;
+    final ImageProvider? avatarImage = imageProviderFromPath(displayPath);
+
+    
 
     return Drawer(
       backgroundColor: Colors.grey[800],
@@ -50,8 +53,8 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
               CircleAvatar(
                 radius: 60,
                 backgroundColor: Colors.grey[700],
-                backgroundImage: displayPath != null ? FileImage(File(displayPath)) : null,
-                child: displayPath == null ? const Icon(Icons.person, size: 60, color: Colors.white) : null,
+                backgroundImage: avatarImage,
+                child: avatarImage == null ? const Icon(Icons.person, size: 60, color: Colors.white) : null,
               ),
               const SizedBox(height: 10),
               if (provider.updatedAt != null)
@@ -66,9 +69,9 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                 onPressed: provider.loading
                     ? null
                     : () async {
-                        await provider.pickAndSavePhoto(context);
-                        widget.onPhotoUpdated();
-                        if (mounted) Navigator.pop(context);
+                       final ok = await provider.pickAndSavePhoto(context);
+                        if (ok) widget.onPhotoUpdated();
+                        if (context.mounted) Navigator.pop(context);
                       },
               ),
               const SizedBox(height: 10),
@@ -79,12 +82,12 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                 onPressed: provider.loading
                     ? null
                     : () async {
-                        final ok = await provider.removePhoto(context);
+                       final ok = await provider.removePhoto(context);
                         if (ok) {
                           widget.onPhotoRemoved();
-                          if (mounted) Navigator.pop(context);
+                          if (context.mounted) Navigator.pop(context);
                         } else {
-                          if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Falha ao remover foto')));
+                          if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Falha ao remover foto')));
                         }
                       },
               ),

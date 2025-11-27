@@ -5,4 +5,5 @@ abstract class ProfilePhotoRepository {
   Future<DateTime?> getUpdatedAt();
   Future<String> save(File image);
   Future<bool> remove();
+  Future<String> saveDataUrl(String dataUrl);
 }

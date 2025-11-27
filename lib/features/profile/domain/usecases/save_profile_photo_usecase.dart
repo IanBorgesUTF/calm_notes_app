@@ -6,4 +6,6 @@ class SaveProfilePhotoUseCase {
   SaveProfilePhotoUseCase(this.repository);
 
   Future<String> call(File image) => repository.save(image);
+
+  Future<String> callDataUrl(String dataUrl) => repository.saveDataUrl(dataUrl);
 }
