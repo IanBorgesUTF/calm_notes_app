@@ -2,6 +2,7 @@ import 'package:calm_notes_app/features/notes/data/models/note_model.dart';
 import 'package:calm_notes_app/features/notes/domain/entities/note.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+
 class NotesRepository {
   final supabase = Supabase.instance.client;
 
@@ -9,6 +10,7 @@ class NotesRepository {
     final data = await supabase
         .from('notes')
         .select()
+        .isFilter('deleted_at', null)
         .order('updated_at', ascending: false);
 
     return (data as List)
@@ -25,6 +27,7 @@ class NotesRepository {
   }
 
   Future<void> delete(String id) async {
-    await supabase.from('notes').delete().eq('id', id);
+    final ts = DateTime.now().millisecondsSinceEpoch;
+    await supabase.from('notes').update({'deleted_at': ts}).eq('id', id);
   }
 }

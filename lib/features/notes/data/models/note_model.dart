@@ -7,6 +7,7 @@ class NoteModel {
   String content;
   List<String> tags;
   int updatedAt;
+  int? deletedAt;
 
   NoteModel({
     this.id,
@@ -15,6 +16,7 @@ class NoteModel {
     required this.content,
     required this.tags,
     required this.updatedAt,
+    this.deletedAt,
   });
 
   factory NoteModel.fromModel(Note note) {
@@ -25,6 +27,7 @@ class NoteModel {
       content: note.content,
       tags: note.tags,
       updatedAt: note.updatedAt,
+      deletedAt: note.deletedAt,
     );
   }
 
@@ -36,6 +39,7 @@ class NoteModel {
       content: content,
       tags: tags,
       updatedAt: updatedAt,
+      deletedAt: deletedAt,
     );
   }
 
@@ -47,6 +51,7 @@ class NoteModel {
       content: json['content'] ?? '',
       tags: List<String>.from(json['tags'] ?? []),
       updatedAt: json['updated_at'] ?? 0,
+      deletedAt: json['deleted_at'] as int?,
     );
   }
 
@@ -58,6 +63,7 @@ class NoteModel {
       'content': content,
       'tags': tags,
       'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
     };
   }
 
@@ -69,6 +75,7 @@ class NoteModel {
       content: note.content,
       tags: note.tags,
       updatedAt: note.updatedAt,
+      deletedAt: note.deletedAt,
     );
   }
 }

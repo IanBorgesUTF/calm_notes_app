@@ -5,6 +5,7 @@ class Note {
   String content;
   List<String> tags;
   int updatedAt;
+  int? deletedAt;
 
   Note({
     this.id,
@@ -13,6 +14,7 @@ class Note {
     required this.content,
     required this.tags,
     required this.updatedAt,
+    this.deletedAt,
   });
 
   factory Note.fromMap(Map<String, dynamic> map) {
@@ -23,6 +25,7 @@ class Note {
       content: map['content'] ?? '',
       tags: List<String>.from(map['tags'] ?? []),
       updatedAt: map['updated_at'] ?? 0,
+      deletedAt: map['deleted_at'] as int?,
     );
   }
 
@@ -34,6 +37,7 @@ class Note {
       'content': content,
       'tags': tags,
       'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
     };
   }
 

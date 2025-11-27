@@ -4,6 +4,7 @@ import '../../domain/entities/note.dart';
 
 class NotesProvider extends ChangeNotifier {
   final _client = Supabase.instance.client;
+  
 
   List<Note> notes = [];
   bool loading = false;
@@ -21,6 +22,7 @@ class NotesProvider extends ChangeNotifier {
         .from('notes')
         .select()
         .eq('user_id', uid)
+        .isFilter('deleted_at', null)
         .order('updated_at', ascending: false);
 
     notes = (res as List).map((e) => Note.fromMap(e)).toList();
@@ -50,7 +52,8 @@ class NotesProvider extends ChangeNotifier {
   }
 
   Future<void> deleteNote(String id) async {
-    await _client.from('notes').delete().eq('id', id);
+    final ts = DateTime.now().millisecondsSinceEpoch;
+    await _client.from('notes').update({'deleted_at': ts}).eq('id', id);
     await loadNotes();
   }
 }
