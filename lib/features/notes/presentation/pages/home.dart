@@ -7,7 +7,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../config/routes.dart';
 import '../../../../core/theme.dart';
 import '../../../profile/presentation/widgets/profile_drawer.dart';
-import '../../../../services/profile_photo/profile_photo_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,22 +15,22 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  final ProfilePhotoService photoService = ProfilePhotoService();
   String? userPhotoPath;
 
   @override
   void initState() {
     super.initState();
-    loadPhoto();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<NotesProvider>().loadNotes();
+      final profileProvider = Provider.of<ProfilePhotoProvider>(context, listen: false);
+      profileProvider.loadSaved().then((_) {
+        if (mounted) setState(() {});
+      });
     });
+
   }
 
-  Future<void> loadPhoto() async {
-    final path = await photoService.getSavedPhotoPath();
-    setState(() => userPhotoPath = path);
-  }
+  
 
   void openEditor([String? id]) {
     Navigator.of(context).pushNamed(Routes.editorPage, arguments: {'id': id});
@@ -67,9 +66,9 @@ class HomePageState extends State<HomePage> {
                           child: FractionallySizedBox(
                             widthFactor: 0.85,
                             child: ProfileDrawer(
-                              userPhotoPath: userPhotoPath,
-                              onPhotoUpdated: loadPhoto,
-                              onPhotoRemoved: loadPhoto,
+                              userPhotoPath: profileProvider.photoPath,
+                              onPhotoUpdated: () => profileProvider.loadSaved(),
+                              onPhotoRemoved: () => profileProvider.loadSaved(),
                             ),
                           ),
                         ),
