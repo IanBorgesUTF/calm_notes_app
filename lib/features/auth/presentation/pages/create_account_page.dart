@@ -1,6 +1,8 @@
 import 'package:calm_notes_app/config/routes.dart';
-import 'package:calm_notes_app/services/create_account/create_account_service.dart';
+import 'package:calm_notes_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:calm_notes_app/utils/validators.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({super.key});
@@ -19,7 +21,7 @@ class CreateAccountPageState extends State<CreateAccountPage> {
   final confirmCtrl = TextEditingController();
   final phoneCtrl = TextEditingController();
 
-  final CreateAccountService createAccountService = CreateAccountService();
+  final Validators validators = Validators();
 
   bool obscurePass = true;
   bool obscureConfirm = true;
@@ -37,7 +39,8 @@ class CreateAccountPageState extends State<CreateAccountPage> {
 
   setState(() => submitting = true);
 
-  final error = await createAccountService.createUser(
+final auth = Provider.of<AuthProvider>(context, listen: false);
+ final ok = await auth.createAccount(
     name: nameCtrl.text.trim(),
     email: emailCtrl.text.trim(),
     password: passCtrl.text.trim(),
@@ -46,15 +49,14 @@ class CreateAccountPageState extends State<CreateAccountPage> {
 
   setState(() => submitting = false);
 
-  if (error != null) {
+  if (!ok) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(auth.error ?? 'Erro')));
     return;
   }
+
   if (!mounted) return;
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text('Conta criada com sucesso!'))
-  );
+  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Conta criada com sucesso!')));
   if (!mounted) return;
   Navigator.of(context).pushReplacementNamed(Routes.loginPage);
 }
@@ -102,7 +104,7 @@ class CreateAccountPageState extends State<CreateAccountPage> {
                         floatingLabelStyle: const TextStyle(color: Colors.blue),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       ),
-                      validator: createAccountService.nameValidator,
+                      validator: validators.name,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
@@ -116,7 +118,7 @@ class CreateAccountPageState extends State<CreateAccountPage> {
                         floatingLabelStyle: const TextStyle(color: Colors.blue),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       ),
-                      validator: createAccountService.emailValidator,
+                      validator: validators.email,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
@@ -133,11 +135,11 @@ class CreateAccountPageState extends State<CreateAccountPage> {
                         ),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       ),
-                      validator: createAccountService.passwordValidator,
+                      validator: validators.password,
                       onChanged: (_) => setState(() {}),
                     ),
                     const SizedBox(height: 8),
-                    Align(alignment: Alignment.centerLeft, child: createAccountService.buildPasswordRules(passCtrl.text,)),
+                    Align(alignment: Alignment.centerLeft, child: validators.buildPasswordRules(passCtrl.text,)),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: confirmCtrl,
@@ -170,7 +172,7 @@ class CreateAccountPageState extends State<CreateAccountPage> {
                         prefixIcon: const Icon(Icons.phone, color: Colors.white),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       ),
-                      validator: createAccountService.phoneValidator,
+                      validator: validators.phone,
                     ),
                     const SizedBox(height: 18),
                     SizedBox(

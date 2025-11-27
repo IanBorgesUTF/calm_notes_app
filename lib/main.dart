@@ -1,12 +1,16 @@
 import 'package:calm_notes_app/config/routes.dart';
-import 'package:calm_notes_app/pages/home/home.dart';
-import 'package:calm_notes_app/pages/welcome/welcome.dart';
-import 'package:calm_notes_app/providers/notes/notes_provider.dart';
+import 'package:calm_notes_app/features/auth/data/datasources/supabase_auth_datasource.dart';
+import 'package:calm_notes_app/features/auth/data/repositories_impl/auth_repository_impl.dart';
+import 'package:calm_notes_app/features/auth/domain/usecases/create_account_usecase.dart';
+import 'package:calm_notes_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:calm_notes_app/features/notes/presentation/pages/home.dart';
+import 'package:calm_notes_app/features/onboarding/presentation/pages/welcome.dart';
+import 'package:calm_notes_app/features/notes/presentation/providers/notes_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'theme.dart';
+import 'core/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
@@ -22,11 +26,18 @@ Future<void> main() async {
     anonKey: supabaseAnonKey,
   );
 
+  final authDs = SupabaseAuthDataSource();
+  final authRepo = AuthRepositoryImpl(authDs);
+  final createAccountUseCase = CreateAccountUseCase(authRepo);
+
+
   final sp = await SharedPreferences.getInstance();
   final seen = sp.getBool('seen_welcome_v1') ?? false;
   runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => NotesProvider()..loadNotes()),
+        ChangeNotifierProvider(create: (_) => AuthProvider(createAccountUseCase: createAccountUseCase),
+        ),
       ], child:
     CalmNotesApp(initialHome: seen ? const HomePage() : const WelcomePage())));
 }

@@ -1,5 +1,5 @@
-import 'package:calm_notes_app/dto/note/note_dto.dart';
-import 'package:calm_notes_app/models/note.dart';
+import 'package:calm_notes_app/features/notes/data/models/note_model.dart';
+import 'package:calm_notes_app/features/notes/domain/entities/note.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class NotesRepository {
@@ -12,14 +12,14 @@ class NotesRepository {
         .order('updated_at', ascending: false);
 
     return (data as List)
-        .map((e) => NoteDto.fromJson(e).toModel())
+        .map((e) => NoteModel.fromJson(e).toModel())
         .toList();
   }
 
   Future<void> save(Note note) async {
     note.updatedAt = DateTime.now().millisecondsSinceEpoch;
 
-    final dto = NoteDto.fromModel(note);
+    final dto = NoteModel.fromModel(note);
 
     await supabase.from('notes').upsert(dto.toJson());
   }

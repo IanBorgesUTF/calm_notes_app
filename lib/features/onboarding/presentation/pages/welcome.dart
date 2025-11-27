@@ -1,4 +1,4 @@
-import 'package:calm_notes_app/pages/login/login_page.dart';
+import 'package:calm_notes_app/features/auth/presentation/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

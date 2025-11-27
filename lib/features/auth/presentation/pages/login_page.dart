@@ -1,6 +1,7 @@
 
 import 'package:calm_notes_app/config/routes.dart';
 import 'package:calm_notes_app/services/login/login_service.dart';
+import 'package:calm_notes_app/utils/validators.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget 
@@ -19,6 +20,7 @@ class LoginPageState extends State<LoginPage> {
   final passCtrl = TextEditingController();
 
   final LoginService loginService = LoginService();
+  final Validators validators = Validators();
 
   bool obscure = true;
   bool submitting = false;
@@ -97,7 +99,7 @@ void submit() async {
                         prefixIcon: const Icon(Icons.email, color: Colors.white),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       ),
-                      validator: loginService.validateEmail,
+                      validator: validators.email,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
@@ -115,11 +117,11 @@ void submit() async {
                         ),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       ),
-                      validator: loginService.validatePassword,
+                      validator: validators.password,
                       onChanged: (_) => setState(() {}),
                     ),
                     const SizedBox(height: 8),
-                    Align(alignment: Alignment.centerLeft, child: loginService.buildPasswordRules(passCtrl.text)),
+                    Align(alignment: Alignment.centerLeft, child: validators.buildPasswordRules(passCtrl.text)),
                     const SizedBox(height: 18),
                     SizedBox(
                       width: double.infinity,

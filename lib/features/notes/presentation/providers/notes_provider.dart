@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../models/note.dart';
+import '../../domain/entities/note.dart';
 
 class NotesProvider extends ChangeNotifier {
   final _client = Supabase.instance.client;

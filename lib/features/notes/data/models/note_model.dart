@@ -1,6 +1,6 @@
-import '../../models/note.dart';
+import '../../domain/entities/note.dart';
 
-class NoteDto {
+class NoteModel {
   String? id;
   String userId;
   String title;
@@ -8,7 +8,7 @@ class NoteDto {
   List<String> tags;
   int updatedAt;
 
-  NoteDto({
+  NoteModel({
     this.id,
     required this.userId,
     required this.title,
@@ -17,8 +17,8 @@ class NoteDto {
     required this.updatedAt,
   });
 
-  factory NoteDto.fromModel(Note note) {
-    return NoteDto(
+  factory NoteModel.fromModel(Note note) {
+    return NoteModel(
       id: note.id,
       userId: note.userId,
       title: note.title,
@@ -39,8 +39,8 @@ class NoteDto {
     );
   }
 
-  factory NoteDto.fromJson(Map<String, dynamic> json) {
-    return NoteDto(
+  factory NoteModel.fromJson(Map<String, dynamic> json) {
+    return NoteModel(
       id: json['id']?.toString(),
       userId: json['user_id'] ?? '',
       title: json['title'] ?? '',
@@ -61,8 +61,8 @@ class NoteDto {
     };
   }
 
-  factory NoteDto.fromModelWithUser(Note note, String userId) {
-    return NoteDto(
+  factory NoteModel.fromModelWithUser(Note note, String userId) {
+    return NoteModel(
       id: note.id,
       userId: userId,
       title: note.title,

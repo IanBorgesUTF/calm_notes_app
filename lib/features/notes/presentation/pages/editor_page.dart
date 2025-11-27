@@ -1,5 +1,5 @@
-import 'package:calm_notes_app/models/note.dart';
-import 'package:calm_notes_app/providers/notes/notes_provider.dart';
+import 'package:calm_notes_app/features/notes/domain/entities/note.dart';
+import 'package:calm_notes_app/features/notes/presentation/providers/notes_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

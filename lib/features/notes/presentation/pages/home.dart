@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'package:calm_notes_app/providers/notes/notes_provider.dart';
+import 'package:calm_notes_app/features/notes/presentation/providers/notes_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../config/routes.dart';
-import '../../theme.dart';
-import '../../pages/profile_drawer/profile_drawer.dart';
-import '../../services/profile_photo/profile_photo_service.dart';
+import '../../../../config/routes.dart';
+import '../../../../core/theme.dart';
+import '../../../profile/presentation/widgets/profile_drawer.dart';
+import '../../../../services/profile_photo/profile_photo_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
