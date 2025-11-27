@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:calm_notes_app/features/profile/domain/usecases/get_profile_photo_path_usecase.dart';
+import 'package:calm_notes_app/features/profile/domain/usecases/get_user_profile_usecase.dart';
 import 'package:calm_notes_app/features/profile/domain/usecases/remove_profile_photo_usecase.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,16 +12,19 @@ class ProfilePhotoProvider extends ChangeNotifier {
   final SaveProfilePhotoUseCase saveUseCase;
   final RemoveProfilePhotoUseCase removeUseCase;
   final GetProfilePhotoPathUseCase getPathUseCase;
+  final GetUserProfileUseCase getUserUseCase;
   final ImagePicker _picker = ImagePicker();
 
   String? photoPath;
   DateTime? updatedAt;
+  String? userName;
   bool loading = false;
 
   ProfilePhotoProvider({
     required this.saveUseCase,
     required this.removeUseCase,
     required this.getPathUseCase,
+    required this.getUserUseCase,
   });
 
   Future<void> loadSaved() async {
@@ -145,5 +149,15 @@ class ProfilePhotoProvider extends ChangeNotifier {
           ),
         ) ??
         false;
+  }
+
+  Future<void> loadProfile(String userId) async {
+    try {
+      final user = await getUserUseCase.call(userId);
+      userName = user?.name;
+      notifyListeners();
+    } catch (_) {
+      // ignore errors silently here; provider should be resilient
+    }
   }
 }

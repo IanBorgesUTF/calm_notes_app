@@ -22,10 +22,15 @@ class HomePageState extends State<HomePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<NotesProvider>().loadNotes();
+      
       final profileProvider = Provider.of<ProfilePhotoProvider>(context, listen: false);
       profileProvider.loadSaved().then((_) {
         if (mounted) setState(() {});
       });
+
+      final userId = Supabase.instance.client.auth.currentUser?.id;
+      if (userId != null) profileProvider.loadProfile(userId); // novo
+  
     });
 
   }
@@ -89,8 +94,8 @@ class HomePageState extends State<HomePage> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Text(
-                    Supabase.instance.client.auth.currentUser?.email?.split('@').first
+                  Text(profileProvider.userName 
+                    ?? Supabase.instance.client.auth.currentUser?.email?.split('@').first
                     ?? 'Usuário',
                     style: const TextStyle(color: Colors.white, fontSize: 16),
                   ),
