@@ -23,10 +23,13 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
-    await datasource.signIn(email: email, password: password);
+  Future<void> login({ required String email, required String password }) async {
+    try {
+      final resp = await datasource.signIn(email: email, password: password);
+      final user = resp?['user'];
+      if (user == null) throw Exception('Falha no login: usuário não encontrado.');
+    } catch (e) {
+      rethrow;
+    }
   }
 }

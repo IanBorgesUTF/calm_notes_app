@@ -2,6 +2,7 @@ import 'package:calm_notes_app/config/routes.dart';
 import 'package:calm_notes_app/features/auth/data/datasources/supabase_auth_datasource.dart';
 import 'package:calm_notes_app/features/auth/data/repositories_impl/auth_repository_impl.dart';
 import 'package:calm_notes_app/features/auth/domain/usecases/create_account_usecase.dart';
+import 'package:calm_notes_app/features/auth/domain/usecases/login_usecase.dart';
 import 'package:calm_notes_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:calm_notes_app/features/notes/presentation/pages/home.dart';
 import 'package:calm_notes_app/features/onboarding/presentation/pages/welcome.dart';
@@ -29,6 +30,7 @@ Future<void> main() async {
   final authDs = SupabaseAuthDataSource();
   final authRepo = AuthRepositoryImpl(authDs);
   final createAccountUseCase = CreateAccountUseCase(authRepo);
+  final loginUseCase = LoginUseCase(authRepo);
 
 
   final sp = await SharedPreferences.getInstance();
@@ -36,7 +38,7 @@ Future<void> main() async {
   runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => NotesProvider()..loadNotes()),
-        ChangeNotifierProvider(create: (_) => AuthProvider(createAccountUseCase: createAccountUseCase),
+        ChangeNotifierProvider(create: (_) => AuthProvider(createAccountUseCase: createAccountUseCase, loginUseCase: loginUseCase),
         ),
       ], child:
     CalmNotesApp(initialHome: seen ? const HomePage() : const WelcomePage())));

@@ -14,11 +14,15 @@ class SupabaseAuthDataSource {
     return user.id;
   }
 
-  Future<void> signIn({
+  Future<Map<String, dynamic>?> signIn({
     required String email,
     required String password,
   }) async {
-    await client.auth.signInWithPassword(email: email, password: password);
+    final res = await client.auth.signInWithPassword(email: email, password: password);
+    return {
+      'user': res.user,
+      'session': res.session,
+    };
   }
 
   Future<void> insertProfile({

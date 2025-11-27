@@ -1,8 +1,9 @@
 
 import 'package:calm_notes_app/config/routes.dart';
-import 'package:calm_notes_app/services/login/login_service.dart';
+import 'package:calm_notes_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:calm_notes_app/utils/validators.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget 
 {
@@ -19,7 +20,6 @@ class LoginPageState extends State<LoginPage> {
   final emailCtrl = TextEditingController();
   final passCtrl = TextEditingController();
 
-  final LoginService loginService = LoginService();
   final Validators validators = Validators();
 
   bool obscure = true;
@@ -35,22 +35,20 @@ void submit() async {
 
   setState(() => submitting = true);
 
-  final error = await loginService.login(
-    emailCtrl.text.trim(),
-    passCtrl.text,
-  );
+  final auth = Provider.of<AuthProvider>(context, listen: false);
+    final ok = await auth.login(email: emailCtrl.text.trim(), password: passCtrl.text);
+
 
   setState(() => submitting = false);
 
-  if (error != null) {
+    if (!ok) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(auth.error ?? 'Erro')));
+      return;
+    }
+
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(error)),
-    );
-    return;
-  }
-  if (!mounted) return;
-  Navigator.of(context).pushReplacementNamed(Routes.homePage);
+    Navigator.of(context).pushReplacementNamed(Routes.homePage);
 }
 
 
