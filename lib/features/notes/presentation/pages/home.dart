@@ -93,6 +93,11 @@ class HomePageState extends State<HomePage> {
               title: const Text('Notas', style: TextStyle(color: Colors.white)),
               onTap: () => Navigator.pop(context),
             ),
+            ListTile(
+              leading: const Icon(Icons.exit_to_app_outlined, color: Colors.white),
+              title: const Text('Sair', style: TextStyle(color: Colors.white)),
+              onTap: () => Navigator.pushReplacementNamed(context, Routes.loginPage),
+            ),
           ],
         ),
       ),

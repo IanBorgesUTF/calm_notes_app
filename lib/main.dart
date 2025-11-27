@@ -7,6 +7,12 @@ import 'package:calm_notes_app/features/auth/presentation/providers/auth_provide
 import 'package:calm_notes_app/features/notes/presentation/pages/home.dart';
 import 'package:calm_notes_app/features/onboarding/presentation/pages/welcome.dart';
 import 'package:calm_notes_app/features/notes/presentation/providers/notes_provider.dart';
+import 'package:calm_notes_app/features/profile/data/datasources/local_profile_photo_datasource.dart';
+import 'package:calm_notes_app/features/profile/data/repositories_impl/profile_photo_repository_impl.dart';
+import 'package:calm_notes_app/features/profile/domain/usecases/get_profile_photo_path_usecase.dart';
+import 'package:calm_notes_app/features/profile/domain/usecases/remove_profile_photo_usecase.dart';
+import 'package:calm_notes_app/features/profile/domain/usecases/save_profile_photo_usecase.dart';
+import 'package:calm_notes_app/features/profile/presentation/providers/profile_photo_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +37,12 @@ Future<void> main() async {
   final authRepo = AuthRepositoryImpl(authDs);
   final createAccountUseCase = CreateAccountUseCase(authRepo);
   final loginUseCase = LoginUseCase(authRepo);
+  final photoDs = LocalProfilePhotoDataSource();
+  final photoRepo = ProfilePhotoRepositoryImpl(photoDs);
+  final getPathUc = GetProfilePhotoPathUseCase(photoRepo);
+  final saveUc = SaveProfilePhotoUseCase(photoRepo);
+  final removeUc = RemoveProfilePhotoUseCase(photoRepo);
+
 
 
   final sp = await SharedPreferences.getInstance();
@@ -38,8 +50,8 @@ Future<void> main() async {
   runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => NotesProvider()..loadNotes()),
-        ChangeNotifierProvider(create: (_) => AuthProvider(createAccountUseCase: createAccountUseCase, loginUseCase: loginUseCase),
-        ),
+        ChangeNotifierProvider(create: (_) => AuthProvider(createAccountUseCase: createAccountUseCase, loginUseCase: loginUseCase)),
+        ChangeNotifierProvider(create: (_) => ProfilePhotoProvider(getPathUseCase: getPathUc, saveUseCase: saveUc, removeUseCase: removeUc,)),
       ], child:
     CalmNotesApp(initialHome: seen ? const HomePage() : const WelcomePage())));
 }

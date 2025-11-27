@@ -1,6 +1,7 @@
 import 'dart:io';
-import 'package:calm_notes_app/services/profile_photo/profile_photo_service.dart';
+import 'package:calm_notes_app/features/profile/presentation/providers/profile_photo_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfileDrawer extends StatefulWidget {
   final String? userPhotoPath;
@@ -19,22 +20,24 @@ class ProfileDrawer extends StatefulWidget {
 }
 
 class _ProfileDrawerState extends State<ProfileDrawer> {
-  final ProfilePhotoService photoService = ProfilePhotoService();
   DateTime? updatedAt;
 
   @override
   void initState() {
     super.initState();
-    loadDate();
-  }
-
-  Future<void> loadDate() async {
-    updatedAt = await photoService.getPhotoUpdatedAt();
-    if (mounted) setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = Provider.of<ProfilePhotoProvider>(context, listen: false);
+      provider.loadSaved().then((_) {
+        if (mounted) setState(() {}); // opcional: atualizar updatedAt se necessário
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ProfilePhotoProvider>(context);
+    final displayPath = provider.photoPath ?? widget.userPhotoPath;
+
     return Drawer(
       backgroundColor: Colors.grey[800],
       child: SafeArea(
@@ -42,61 +45,54 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              Text(
-                'Perfil do Usuário',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              const Text('Perfil do Usuário', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
               CircleAvatar(
                 radius: 60,
                 backgroundColor: Colors.grey[700],
-                backgroundImage: widget.userPhotoPath != null
-                    ? FileImage(File(widget.userPhotoPath!))
-                    : null,
-                child: widget.userPhotoPath == null
-                    ? const Icon(Icons.person, size: 60, color: Colors.white)
-                    : null,
+                backgroundImage: displayPath != null ? FileImage(File(displayPath)) : null,
+                child: displayPath == null ? const Icon(Icons.person, size: 60, color: Colors.white) : null,
               ),
               const SizedBox(height: 10),
-              if (updatedAt != null)
+              if (provider.updatedAt != null)
                 Text(
-                  'Atualizada em ${updatedAt!.day}/${updatedAt!.month}/${updatedAt!.year}',
+                  'Atualizada em ${provider.updatedAt!.day}/${provider.updatedAt!.month}/${provider.updatedAt!.year}',
                   style: const TextStyle(color: Colors.white70, fontSize: 14),
                 ),
               const SizedBox(height: 30),
               ElevatedButton.icon(
                 icon: const Icon(Icons.photo_camera, color: Colors.black),
-                label: const Text('Alterar foto',style: TextStyle(color: Colors.black)),
-                onPressed: () async {
-                  final navigator = Navigator.of(context);
-                  await photoService.pickPhoto(context);
-                  widget.onPhotoUpdated();
-                  navigator.pop(); 
-                },
+                label: const Text('Alterar foto', style: TextStyle(color: Colors.black)),
+                onPressed: provider.loading
+                    ? null
+                    : () async {
+                        await provider.pickAndSavePhoto(context);
+                        widget.onPhotoUpdated();
+                        if (mounted) Navigator.pop(context);
+                      },
               ),
               const SizedBox(height: 10),
               ElevatedButton.icon(
                 icon: const Icon(Icons.delete_forever, color: Colors.white),
-                label: const Text('Remover foto', style: TextStyle(color: Colors.white),),
+                label: const Text('Remover foto', style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                
-                onPressed: () async {
-                  final navigator = Navigator.of(context);
-                  await photoService.removePhoto();
-                  widget.onPhotoRemoved();
-                  navigator.pop();
-                },
+                onPressed: provider.loading
+                    ? null
+                    : () async {
+                        final ok = await provider.removePhoto(context);
+                        if (ok) {
+                          widget.onPhotoRemoved();
+                          if (mounted) Navigator.pop(context);
+                        } else {
+                          if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Falha ao remover foto')));
+                        }
+                      },
               ),
               const Spacer(),
               TextButton.icon(
                 onPressed: () => Navigator.pop(context),
                 icon: const Icon(Icons.arrow_back, color: Colors.white70),
-                label: const Text('Voltar',
-                    style: TextStyle(color: Colors.white70)),
+                label: const Text('Voltar', style: TextStyle(color: Colors.white70)),
               ),
             ],
           ),
