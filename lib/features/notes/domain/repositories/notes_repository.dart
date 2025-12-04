@@ -18,6 +18,13 @@ class NotesRepository {
         .toList();
   }
 
+  Future<Map<String, dynamic>> saveAndReturnMap(Note note) async {
+    note.updatedAt = DateTime.now().millisecondsSinceEpoch;
+    final dto = NoteModel.fromModel(note);
+    final res = await supabase.from('notes').upsert(dto.toJson()).select().single();
+    return Map<String, dynamic>.from(res as Map);
+  }
+
   Future<void> save(Note note) async {
     note.updatedAt = DateTime.now().millisecondsSinceEpoch;
 
@@ -30,4 +37,16 @@ class NotesRepository {
     final ts = DateTime.now().millisecondsSinceEpoch;
     await supabase.from('notes').update({'deleted_at': ts}).eq('id', id);
   }
+
+  Future<Map<String, dynamic>> syncUpsertFromSync(Map<String, dynamic> localMap) async {
+    final note = Note.fromMap(localMap);
+    final res = await supabase.from('notes').upsert(note.toMap()).select().single();
+    return Map<String, dynamic>.from(res as Map);
+  }
+
+  Future<void> syncDeleteFromSync(String id, Map<String, dynamic> localMap) async {
+    final ts = localMap['deleted_at'] as int? ?? DateTime.now().millisecondsSinceEpoch;
+    await supabase.from('notes').update({'deleted_at': ts}).eq('id', id);
+  }
+  
 }

@@ -1,9 +1,11 @@
 import 'package:calm_notes_app/config/routes.dart';
+import 'package:calm_notes_app/core/sync_service.dart';
 import 'package:calm_notes_app/features/auth/data/datasources/supabase_auth_datasource.dart';
 import 'package:calm_notes_app/features/auth/data/repositories_impl/auth_repository_impl.dart';
 import 'package:calm_notes_app/features/auth/domain/usecases/create_account_usecase.dart';
 import 'package:calm_notes_app/features/auth/domain/usecases/login_usecase.dart';
 import 'package:calm_notes_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:calm_notes_app/features/notes/data/datasources/local_notes_datasource.dart';
 import 'package:calm_notes_app/features/notes/presentation/pages/home.dart';
 import 'package:calm_notes_app/features/onboarding/presentation/pages/welcome.dart';
 import 'package:calm_notes_app/features/notes/presentation/providers/notes_provider.dart';
@@ -18,6 +20,7 @@ import 'package:calm_notes_app/features/profile/domain/usecases/save_profile_pho
 import 'package:calm_notes_app/features/profile/presentation/providers/profile_photo_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/theme.dart';
@@ -35,6 +38,15 @@ Future<void> main() async {
     url: supabaseUrl,
     anonKey: supabaseAnonKey,
   );
+
+  await Hive.initFlutter();
+  await Hive.openBox('notes_box');
+
+  final localDs = LocalNotesDataSource(boxName: 'notes_box');
+  await localDs.init();
+
+  final syncService = SyncService(localNotesDataSource: localDs);
+  await syncService.init();
 
   final authDs = SupabaseAuthDataSource();
   final authRepo = AuthRepositoryImpl(authDs);
@@ -55,7 +67,7 @@ Future<void> main() async {
   final seen = sp.getBool('seen_welcome_v1') ?? false;
   runApp(MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => NotesProvider()..loadNotes()),
+        ChangeNotifierProvider(create: (_) => NotesProvider(localNotesDataSource: localDs, syncService: syncService)..loadNotes()),
         ChangeNotifierProvider(create: (_) => AuthProvider(createAccountUseCase: createAccountUseCase, loginUseCase: loginUseCase)),
         ChangeNotifierProvider(create: (_) => ProfilePhotoProvider(getPathUseCase: getPathUc, saveUseCase: saveUc, removeUseCase: removeUc, getUserUseCase: getUserUc)),
       ], child:

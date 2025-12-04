@@ -115,7 +115,11 @@ class HomePageState extends State<HomePage> {
           ],
         ),
       ),
-     body: notesProvider.loading
+     body: RefreshIndicator(
+      onRefresh: () async {
+       await context.read<NotesProvider>().loadNotes(forceSync: true);
+      },
+      child: notesProvider.loading
     ? const Center(child: CircularProgressIndicator())
     : notes.isEmpty
         ? const Center(
@@ -160,6 +164,7 @@ class HomePageState extends State<HomePage> {
               );
             },
           ),
+     ),
            floatingActionButton: FloatingActionButton(
         backgroundColor: mint,
         child: const Icon(Icons.add),
