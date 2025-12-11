@@ -12,11 +12,15 @@ class WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('CalmNotes'),
         automaticallyImplyLeading: false,
       ),
+
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -24,19 +28,29 @@ class WelcomePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 24),
-              const Text(
+
+              Text(
                 'Bem-vindo ao CalmNotes',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: colors.onSurface,        // ← usa cor do tema
+                ),
               ),
+
               const SizedBox(height: 16),
-              const Text(
+
+              Text(
                 'Escreva suas notas, elas ficam locais por padrão. '
                 'Leia nossos Termos e Condições antes de continuar.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.white70),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colors.onSurfaceVariant,
+                ),
               ),
+
               const Spacer(),
+
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -46,12 +60,16 @@ class WelcomePage extends StatelessWidget {
                       MaterialPageRoute(builder: (_) => const LoginPage()),
                     );
                   },
-                  style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.onPrimary,
+                  ),
                   child: const Text('Começar com minhas anotações'),
                 ),
               ),
+
               const SizedBox(height: 24),
-              
             ],
           ),
         ),

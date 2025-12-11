@@ -34,7 +34,10 @@ class Validators {
     return null;
   }
 
-  Widget buildPasswordRules(String value) {
+  Widget buildPasswordRules(String value, BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    
     final rules = <Map<String, bool>>[
       {'8+ caracteres': value.length >= 8},
       {'Maiúscula (A-Z)': RegExp(r'[A-Z]').hasMatch(value)},
@@ -57,7 +60,7 @@ class Validators {
               color: ok ? Colors.green : Colors.redAccent,
             ),
             const SizedBox(width: 4),
-            Text(text, style: TextStyle(color: Colors.white),),
+            Text(text, style: TextStyle(color: colors.onSurfaceVariant),),
           ],
         );
       }).toList(),

@@ -23,7 +23,9 @@ class TermsPageState extends State<TermsPage> {
   }
 
   void _onScroll() {
-    final max = _scrollCtrl.position.hasContentDimensions ? _scrollCtrl.position.maxScrollExtent : 0.0;
+    final max = _scrollCtrl.position.hasContentDimensions
+        ? _scrollCtrl.position.maxScrollExtent
+        : 0.0;
     if (max <= 0) {
       setState(() => _progress = 0.0);
       return;
@@ -52,6 +54,9 @@ class TermsPageState extends State<TermsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     const termsText = '''
 Termos e Condições
 
@@ -91,8 +96,8 @@ Obrigado por usar o CalmNotes. Ao marcar "Li e concordo" você confirma que leu 
           children: [
             LinearProgressIndicator(
               value: _progress,
-              backgroundColor: Colors.white12,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.greenAccent),
+              backgroundColor: colors.surfaceContainerHighest,
+              valueColor: AlwaysStoppedAnimation(colors.primary),
               minHeight: 4,
             ),
             const SizedBox(height: 8),
@@ -105,7 +110,10 @@ Obrigado por usar o CalmNotes. Ao marcar "Li e concordo" você confirma que leu 
                       canAgree
                           ? 'Você leu todo o texto. Agora pode marcar a caixa.'
                           : 'Role até o final para habilitar a confirmação (${(_progress * 100).toInt()}%)',
-                      style: const TextStyle(color: Colors.white70, fontSize: 13),
+                      style: TextStyle(
+                        color: colors.onSurfaceVariant,
+                        fontSize: 13,
+                      ),
                     ),
                   ),
                 ],
@@ -120,20 +128,20 @@ Obrigado por usar o CalmNotes. Ao marcar "Li e concordo" você confirma que leu 
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Termos e Condições',
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: colors.onSurface,
                         ),
                       ),
                       const SizedBox(height: 16),
                       Text(
                         termsText,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
-                          color: Colors.white70,
+                          color: colors.onSurfaceVariant,
                           height: 1.5,
                         ),
                       ),
@@ -153,14 +161,18 @@ Obrigado por usar o CalmNotes. Ao marcar "Li e concordo" você confirma que leu 
                     children: [
                       Checkbox(
                         value: _agreed,
-                        onChanged: canAgree ? (v) => setState(() => _agreed = v ?? false) : null,
-                        activeColor: Colors.greenAccent,
+                        onChanged: canAgree
+                            ? (v) => setState(() => _agreed = v ?? false)
+                            : null,
+                        activeColor: colors.primary,
                       ),
                       Expanded(
                         child: Text(
                           'Li e concordo com os Termos e Condições',
                           style: TextStyle(
-                            color: canAgree ? Colors.white : Colors.white54,
+                            color: canAgree
+                                ? colors.onSurface
+                                : colors.onSurfaceVariant,
                           ),
                         ),
                       ),
@@ -172,8 +184,10 @@ Obrigado por usar o CalmNotes. Ao marcar "Li e concordo" você confirma que leu 
                     child: ElevatedButton(
                       onPressed: _agreed ? _handleNext : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _agreed ? Colors.greenAccent : Colors.white12,
-                        foregroundColor: _agreed ? Colors.black : Colors.white60,
+                        backgroundColor:
+                            _agreed ? colors.primary : colors.surfaceContainerHighest,
+                        foregroundColor:
+                            _agreed ? colors.onPrimary : colors.onSurfaceVariant,
                       ),
                       child: const Padding(
                         padding: EdgeInsets.symmetric(vertical: 12),

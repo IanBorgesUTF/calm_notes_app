@@ -20,8 +20,6 @@ class ProfileDrawer extends StatefulWidget {
 }
 
 class _ProfileDrawerState extends State<ProfileDrawer> {
-  DateTime? updatedAt;
-
   @override
   void initState() {
     super.initState();
@@ -35,67 +33,82 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     final provider = Provider.of<ProfilePhotoProvider>(context);
     final displayPath = provider.photoPath ?? widget.userPhotoPath;
     final ImageProvider? avatarImage = imageProviderFromPath(displayPath);
 
-    
-
     return Drawer(
-      backgroundColor: Colors.grey[800],
+      backgroundColor: colors.surface,
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              const Text('Perfil do Usuário', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+              Text(
+                'Perfil do Usuário',
+                style: TextStyle(
+                  color: colors.onSurface,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 20),
               CircleAvatar(
                 radius: 60,
-                backgroundColor: Colors.grey[700],
+                backgroundColor: colors.primary.withAlpha(20),
                 backgroundImage: avatarImage,
-                child: avatarImage == null ? const Icon(Icons.person, size: 60, color: Colors.white) : null,
+                child: avatarImage == null
+                    ? Icon(Icons.person, size: 60, color: colors.onSurface)
+                    : null,
               ),
               const SizedBox(height: 10),
               if (provider.updatedAt != null)
                 Text(
                   'Atualizada em ${provider.updatedAt!.day}/${provider.updatedAt!.month}/${provider.updatedAt!.year}',
-                  style: const TextStyle(color: Colors.white70, fontSize: 14),
+                  style: TextStyle(color: colors.onSurfaceVariant, fontSize: 14),
                 ),
               const SizedBox(height: 30),
               ElevatedButton.icon(
-                icon: const Icon(Icons.photo_camera, color: Colors.black),
-                label: const Text('Alterar foto', style: TextStyle(color: Colors.black)),
+                icon: Icon(Icons.photo_camera, color: colors.onPrimary),
+                label: Text('Alterar foto', style: TextStyle(color: colors.onPrimary)),
+                style: ElevatedButton.styleFrom(backgroundColor: colors.primary),
                 onPressed: provider.loading
                     ? null
                     : () async {
-                       final ok = await provider.pickAndSavePhoto(context);
+                        final ok = await provider.pickAndSavePhoto(context);
                         if (ok) widget.onPhotoUpdated();
                         if (context.mounted) Navigator.pop(context);
                       },
               ),
               const SizedBox(height: 10),
               ElevatedButton.icon(
-                icon: const Icon(Icons.delete_forever, color: Colors.white),
-                label: const Text('Remover foto', style: TextStyle(color: Colors.white)),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                icon: Icon(Icons.delete_forever, color: colors.onError),
+                label: Text('Remover foto', style: TextStyle(color: colors.onError)),
+                style: ElevatedButton.styleFrom(backgroundColor: colors.error),
                 onPressed: provider.loading
                     ? null
                     : () async {
-                       final ok = await provider.removePhoto(context);
+                        final ok = await provider.removePhoto(context);
                         if (ok) {
                           widget.onPhotoRemoved();
                           if (context.mounted) Navigator.pop(context);
                         } else {
-                          if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Falha ao remover foto')));
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Falha ao remover foto')),
+                            );
+                          }
                         }
                       },
               ),
               const Spacer(),
               TextButton.icon(
                 onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.arrow_back, color: Colors.white70),
-                label: const Text('Voltar', style: TextStyle(color: Colors.white70)),
+                icon: Icon(Icons.arrow_back, color: colors.onSurfaceVariant),
+                label: Text('Voltar', style: TextStyle(color: colors.onSurfaceVariant)),
               ),
             ],
           ),

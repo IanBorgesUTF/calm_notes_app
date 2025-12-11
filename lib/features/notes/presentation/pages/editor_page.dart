@@ -89,17 +89,29 @@ class EditorPageState extends State<EditorPage> {
     if (note == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
+
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Editor'),
         actions: [
           IconButton(
             icon: saving
-                ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Icon(Icons.save),
+                ? SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: colors.onPrimary,
+                    ),
+                  )
+                : Icon(Icons.save, color: colors.onPrimary),
             onPressed: saving ? null : save,
           )
         ],
+        backgroundColor: colors.primary,
       ),
       body: Padding(
         padding: const EdgeInsets.all(12),
@@ -107,24 +119,24 @@ class EditorPageState extends State<EditorPage> {
           children: [
             TextField(
               controller: titleCtrl,
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
+              style: TextStyle(color: colors.onSurface, fontSize: 20, fontWeight: FontWeight.bold),
+              decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: 'Título',
-                hintStyle: TextStyle(color: Colors.white54),
+                hintStyle: TextStyle(color: colors.onSurfaceVariant),
               ),
             ),
-            const Divider(color: Color.fromRGBO(255,255,255,0.12)),
+            Divider(color: colors.onSurface.withAlpha(12)),
             Expanded(
               child: TextField(
                 controller: contentCtrl,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: colors.onSurface),
                 maxLines: null,
                 expands: true,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: 'Escreva seus lembretes...',
-                  hintStyle: TextStyle(color: Colors.white54),
+                  hintStyle: TextStyle(color: colors.onSurfaceVariant),
                 ),
               ),
             ),

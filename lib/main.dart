@@ -18,12 +18,12 @@ import 'package:calm_notes_app/features/profile/domain/usecases/get_user_profile
 import 'package:calm_notes_app/features/profile/domain/usecases/remove_profile_photo_usecase.dart';
 import 'package:calm_notes_app/features/profile/domain/usecases/save_profile_photo_usecase.dart';
 import 'package:calm_notes_app/features/profile/presentation/providers/profile_photo_provider.dart';
+import 'package:calm_notes_app/features/theme/presentation/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'core/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
@@ -70,6 +70,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => NotesProvider(localNotesDataSource: localDs, syncService: syncService)..loadNotes()),
         ChangeNotifierProvider(create: (_) => AuthProvider(createAccountUseCase: createAccountUseCase, loginUseCase: loginUseCase)),
         ChangeNotifierProvider(create: (_) => ProfilePhotoProvider(getPathUseCase: getPathUc, saveUseCase: saveUc, removeUseCase: removeUc, getUserUseCase: getUserUc)),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ], child:
     CalmNotesApp(initialHome: seen ? const HomePage() : const WelcomePage())));
 }
@@ -78,16 +79,15 @@ class CalmNotesApp extends StatelessWidget {
   final Widget initialHome;
   const CalmNotesApp({super.key, required this.initialHome});
 
-  @override
+ @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return MaterialApp(
       title: 'CalmNotes',
-      theme: ThemeData(
-        scaffoldBackgroundColor: slate,
-        primaryColor: mint,
-        colorScheme: ColorScheme.fromSwatch().copyWith(secondary: amber),
-        appBarTheme: AppBarTheme(backgroundColor: slate, foregroundColor: Colors.white),
-      ),
+      theme: themeProvider.lightTheme,
+      darkTheme: themeProvider.darkTheme,
+      themeMode: ThemeMode.system,
       onGenerateRoute: Routes.generateRoute,
       home: initialHome,
       debugShowCheckedModeBanner: false,

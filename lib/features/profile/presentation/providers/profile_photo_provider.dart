@@ -34,13 +34,18 @@ class ProfilePhotoProvider extends ChangeNotifier {
   }
 
   Future<bool> pickAndSavePhoto(BuildContext context) async {
-    final source = await _selectSource(context);
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    final source = await _selectSource(context, colors);
     if (source == null) return false;
+
     final XFile? picked = await _picker.pickImage(source: source);
     if (picked == null) return false;
 
     bool confirmed;
     if (!context.mounted) return false;
+
     if (kIsWeb) {
       final bytes = await picked.readAsBytes();
       final previewImage = MemoryImage(Uint8List.fromList(bytes));
@@ -48,17 +53,25 @@ class ProfilePhotoProvider extends ChangeNotifier {
       confirmed = await showDialog<bool>(
             context: context,
             builder: (_) => AlertDialog(
-              title: const Text('Confirmar foto'),
+              backgroundColor: colors.surface,
+              title: Text('Confirmar foto', style: TextStyle(color: colors.onSurface)),
               content: Image(image: previewImage),
               actions: [
-                TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')),
-                TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Confirmar')),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: Text('Cancelar', style: TextStyle(color: colors.primary)),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  style: ElevatedButton.styleFrom(backgroundColor: colors.primary),
+                  child: Text('Confirmar', style: TextStyle(color: colors.onPrimary)),
+                ),
               ],
             ),
           ) ??
           false;
     } else {
-      confirmed = await _showPreview(context, File(picked.path));
+      confirmed = await _showPreview(context, File(picked.path), colors);
     }
 
     if (confirmed != true) return false;
@@ -105,21 +118,22 @@ class ProfilePhotoProvider extends ChangeNotifier {
     }
   }
 
-  Future<ImageSource?> _selectSource(BuildContext context) async {
+  Future<ImageSource?> _selectSource(BuildContext context, ColorScheme colors) async {
     return showDialog<ImageSource>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Selecionar imagem'),
-        content: const Text('De onde deseja obter a foto?'),
+        backgroundColor: colors.surface,
+        title: Text('Selecionar imagem', style: TextStyle(color: colors.onSurface)),
+        content: Text('De onde deseja obter a foto?', style: TextStyle(color: colors.onSurfaceVariant)),
         actions: [
           TextButton.icon(
-            icon: const Icon(Icons.photo_camera, color: Colors.black,),
-            label: const Text('Câmera',style: TextStyle(color: Colors.black)),
+            icon: Icon(Icons.photo_camera, color: colors.primary),
+            label: Text('Câmera', style: TextStyle(color: colors.primary)),
             onPressed: () => Navigator.pop(ctx, ImageSource.camera),
           ),
           TextButton.icon(
-            icon: const Icon(Icons.photo_library, color: Colors.black),
-            label: const Text('Galeria',style: TextStyle(color: Colors.black)),
+            icon: Icon(Icons.photo_library, color: colors.primary),
+            label: Text('Galeria', style: TextStyle(color: colors.primary)),
             onPressed: () => Navigator.pop(ctx, ImageSource.gallery),
           ),
         ],
@@ -127,23 +141,22 @@ class ProfilePhotoProvider extends ChangeNotifier {
     );
   }
 
- Future<bool> _showPreview(BuildContext context, File image) async {
+  Future<bool> _showPreview(BuildContext context, File image, ColorScheme colors) async {
     return await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: const Text('Confirmar foto',style: TextStyle(color: Colors.black),),
+            backgroundColor: colors.surface,
+            title: Text('Confirmar foto', style: TextStyle(color: colors.onSurface)),
             content: Image.file(image, fit: BoxFit.cover),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Cancelar',style: TextStyle(color: Colors.black),),
+                child: Text('Cancelar', style: TextStyle(color: colors.primary)),
               ),
               ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all<Color>(Colors.blue),
-                ),
+                style: ElevatedButton.styleFrom(backgroundColor: colors.primary),
                 onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Salvar',style: TextStyle(color: Colors.white),),
+                child: Text('Salvar', style: TextStyle(color: colors.onPrimary)),
               ),
             ],
           ),
@@ -156,8 +169,6 @@ class ProfilePhotoProvider extends ChangeNotifier {
       final user = await getUserUseCase.call(userId);
       userName = user?.name;
       notifyListeners();
-    } catch (_) {
-      // ignore errors silently here; provider should be resilient
-    }
+    } catch (_) {}
   }
 }
