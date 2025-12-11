@@ -39,6 +39,9 @@ Future<void> main() async {
     anonKey: supabaseAnonKey,
   );
 
+  final themeProvider = ThemeProvider();
+  await themeProvider.loadTheme();
+
   await Hive.initFlutter();
   await Hive.openBox('notes_box');
 
@@ -65,6 +68,8 @@ Future<void> main() async {
 
   final sp = await SharedPreferences.getInstance();
   final seen = sp.getBool('seen_welcome_v1') ?? false;
+
+  
   runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => NotesProvider(localNotesDataSource: localDs, syncService: syncService)..loadNotes()),
@@ -87,7 +92,7 @@ class CalmNotesApp extends StatelessWidget {
       title: 'CalmNotes',
       theme: themeProvider.lightTheme,
       darkTheme: themeProvider.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeProvider.themeMode,
       onGenerateRoute: Routes.generateRoute,
       home: initialHome,
       debugShowCheckedModeBanner: false,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AppColors {
   static const slate = Color.fromARGB(255, 226, 226, 226);
@@ -14,8 +15,56 @@ class AppColors {
 }
 
 class ThemeProvider extends ChangeNotifier {
-  bool _isDark = false;
-  bool get isDark => _isDark;
+  
+  ThemeMode _themeMode = ThemeMode.system;
+
+  ThemeMode get themeMode => _themeMode;
+
+  Future<void> loadTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final saved = prefs.getString('theme_mode');
+
+    if (saved == 'dark') {
+      _themeMode = ThemeMode.dark;
+    } else if (saved == 'light') {
+      _themeMode = ThemeMode.light;
+    } else {
+      _themeMode = ThemeMode.system; 
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> _saveTheme(ThemeMode mode) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (mode == ThemeMode.dark) {
+      prefs.setString('theme_mode', 'dark');
+    } else if (mode == ThemeMode.light) {
+      prefs.setString('theme_mode', 'light');
+    } else {
+      prefs.setString('theme_mode', 'system');
+    }
+  }
+
+  void setDark() {
+    _themeMode = ThemeMode.dark;
+    _saveTheme(_themeMode);
+    notifyListeners();
+  }
+
+  void setLight() {
+    _themeMode = ThemeMode.light;
+    _saveTheme(_themeMode);
+    notifyListeners();
+  }
+
+  void setSystem() {
+    _themeMode = ThemeMode.system;
+    _saveTheme(_themeMode);
+    notifyListeners();
+  }
 
   final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
@@ -25,12 +74,10 @@ class ThemeProvider extends ChangeNotifier {
       secondary: AppColors.amber,
       error: AppColors.error,
     ),
-
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.slate,
       foregroundColor: Colors.black87,
     ),
-
     textTheme: const TextTheme(
       bodyMedium: TextStyle(color: Colors.black87),
     ),
@@ -39,29 +86,27 @@ class ThemeProvider extends ChangeNotifier {
   final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     scaffoldBackgroundColor: AppColors.slateDark,
-
     colorScheme: const ColorScheme.dark(
       primary: AppColors.mintDark,
       secondary: AppColors.amberDark,
       error: AppColors.error,
     ),
-
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.slateDark,
       foregroundColor: AppColors.slate,
     ),
-
     textTheme: const TextTheme(
       bodyMedium: TextStyle(color: AppColors.slate),
     ),
   );
 
-  ThemeData get currentTheme => _isDark ? darkTheme : lightTheme;
-
-  ThemeMode get themeMode => _isDark ? ThemeMode.dark : ThemeMode.light;
-
   void toggleTheme() {
-    _isDark = !_isDark;
-    notifyListeners();
+  if (_themeMode == ThemeMode.system || _themeMode == ThemeMode.light) {
+    _themeMode = ThemeMode.dark;
+  } else {
+    _themeMode = ThemeMode.light;
   }
+  notifyListeners();
+}
+
 }

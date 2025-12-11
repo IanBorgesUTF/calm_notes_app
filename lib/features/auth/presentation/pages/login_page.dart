@@ -70,7 +70,7 @@ class LoginPageState extends State<LoginPage> {
         actions: [
           IconButton(
             icon: Icon(
-              themeProvider.isDark ? Icons.nightlight_round : Icons.wb_sunny,
+              themeProvider.themeMode == ThemeMode.dark ? Icons.nightlight_round : Icons.wb_sunny,
               color: colors.onSurfaceVariant,
             ),
             onPressed: () {
@@ -87,7 +87,7 @@ class LoginPageState extends State<LoginPage> {
               CircleAvatar(
                 radius: 40,
                backgroundColor: theme.colorScheme.primary.withValues(alpha: 128),
-                child: Icon(Icons.person_add, size: 40, color: theme.colorScheme.primary),
+                child: Icon(Icons.person_add, size: 40, color: theme.colorScheme.onPrimary),
               ),
               const SizedBox(height: 16),
               Text('CalmNotes',
